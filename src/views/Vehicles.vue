@@ -1,9 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useTireStore } from '../stores/tire';
 
+
+
 const store = useTireStore();
-const vehicles = ref(store.vehicles);
+const vehicles = ref([]); // Inicializa vazio, será preenchido pela API
 
 const newVehicle = ref({
   name: '',
@@ -20,6 +22,32 @@ const vehicleTypes = [
   'Van',
   'Carreta'
 ];
+
+async function fetchVehicles() {
+  
+  try {
+    const assets = await _gpsApiv2.getAssets();
+    console.log(assets);
+    
+    vehicles.value = assets.map(asset => ({
+      id: asset.id,
+      name: asset.name,
+      plate: asset.plate,
+      type: asset.type,
+      axles: asset.axles,
+      notes: asset.notes || '',
+      createdAt: asset.createdAt || new Date().toISOString()
+    }));
+    
+    
+  } catch (error) {
+    alert('Erro ao buscar veículos: ' + (error.response?.data?.message || error.message));
+  }
+}
+
+onMounted(() => {
+  fetchVehicles();
+});
 
 function handleSubmit() {
   store.addVehicle({

@@ -1,5 +1,7 @@
 <script setup>
 import { RouterView } from 'vue-router';
+import { getTokenFromUrl } from './utils/token';
+getTokenFromUrl();
 </script>
 
 <template>
